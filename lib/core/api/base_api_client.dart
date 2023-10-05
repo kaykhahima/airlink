@@ -29,8 +29,6 @@ class BaseApiService {
     //get uri
     var uri = Uri.parse('$baseUrl/api/$endpointPostModifier');
 
-    print(uri);
-
     //get jwt token
     final token = await tokenManager.getToken();
 

@@ -97,8 +97,9 @@ class TokenDeviceRemoteDataSourceImpl implements TokenDeviceRemoteDataSource {
         } else {
           throw const AirLinkFailure(message: 'Something went wrong');
         }
-      } catch (e) {
+      } catch (e, st) {
         log(e.toString());
+        log(st.toString());
         throw AirLinkFailure(message: e.toString());
       }
     } else {

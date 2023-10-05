@@ -82,6 +82,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         brightness: MediaQuery.of(context).platformBrightness,
+        colorSchemeSeed: const Color(0xFF1B75BA),
         useMaterial3: true,
       ),
       home: const HomePage(),
@@ -99,11 +100,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late DeviceProvider deviceProvider;
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   static const List<Widget> _widgetOptions = <Widget>[
-    DeviceListPage(),
     GenerateTokenPage(),
+    DeviceListPage(),
     ProfilePage(),
+  ];
+
+  final List<String> _titles = <String>[
+    'Generate Token',
+    'Device List',
+    'Profile',
   ];
 
   void _onItemTapped(int index) {
@@ -122,7 +129,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AirLink'),
+        title: Text('AirLink - ${_titles.elementAt(_selectedIndex)}'),
       ),
       body: Container(
         child: _widgetOptions.elementAt(_selectedIndex),
@@ -130,12 +137,12 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Devices',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.monetization_on_outlined),
             label: 'Generate Token',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Device List',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -145,7 +152,7 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
-      floatingActionButton: _selectedIndex == 0
+      floatingActionButton: _selectedIndex == 1
           ? FloatingActionButton.extended(
               onPressed: () async {
                 // Start scanning
