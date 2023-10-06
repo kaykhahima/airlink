@@ -2,7 +2,6 @@ import 'package:airlink/core/errors/failures.dart';
 import 'package:airlink/features/device/data/models/telemetry_model.dart';
 import 'package:airlink/features/device/domain/entities/advertisement_packet.dart';
 import 'package:airlink/features/device/domain/entities/device.dart';
-import 'package:airlink/features/device/domain/entities/telemetry.dart';
 import 'package:airlink/features/device/domain/repositories/device_repository.dart';
 import 'package:dartz/dartz.dart';
 
