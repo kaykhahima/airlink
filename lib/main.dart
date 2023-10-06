@@ -55,6 +55,9 @@ void main() async {
   //storing device profile data: username, pwd, gatewayDeviceId
   await Hive.openBox('profiles');
 
+  //storing angaza credentials: username, pwd
+  await Hive.openBox('angaza_credentials');
+
   //store telemetry data from the BLE Device
   await Hive.openBox('telemetry');
 
@@ -104,19 +107,18 @@ class _HomePageState extends State<HomePage> {
   static const List<Widget> _widgetOptions = <Widget>[
     GenerateTokenPage(),
     DeviceListPage(),
-    ProfilePage(),
+    CredentialsPage(),
   ];
 
   final List<String> _titles = <String>[
-    'Generate Token',
-    'Device List',
-    'Profile',
+    'Tenant Admin',
+    'Client',
+    'Manufacturer',
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    _selectedIndex = index;
+    setState(() {});
   }
 
   @override
@@ -137,8 +139,8 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.monetization_on_outlined),
-            label: 'Generate Token',
+            icon: Icon(Icons.timeline),
+            label: 'PayG Token',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
@@ -146,7 +148,7 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
+            label: 'Credentials',
           )
         ],
         currentIndex: _selectedIndex,

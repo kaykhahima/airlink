@@ -3,15 +3,23 @@ class TokenDevice {
   /// E.g. Add Credit, Set Credit, Unlock PAYG.
   final String method;
 
-  /// The device uuid of the device to be added credit to.
+  /// The PAYG type of the device to be added credit to.
+  final String paygType;
+
+  /// The device uuid of the AirLink device to be added credit to.
   final String deviceUuid;
+
+  /// The Angaza unit number of the Angaza device to be added credit to.
+  final String angazaUnitNumber;
 
   /// The number of days to be added to the device.
   final int numberOfDays;
 
   TokenDevice({
     this.method = 'Add Credit',
-    required this.deviceUuid,
+    this.deviceUuid = '',
+    this.angazaUnitNumber = '',
+    required this.paygType,
     required this.numberOfDays,
   });
 }

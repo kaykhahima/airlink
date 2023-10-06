@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 enum Method {
-  get, post
+  get, post, put,
 }
 
 enum Scope {
@@ -30,7 +30,6 @@ enum AlertAction {
 enum Sync {
   serverToPhone,
   phoneToDevice,
-  deviceToServer,
 }
 
 extension ScopeToString on Scope {

@@ -7,7 +7,7 @@ class Snackbar {
       {required BuildContext context,
       required SnackbarType type,
       required String message,
-      int timeoutInSeconds = 3}) {
+      int timeoutInSeconds = 4}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -35,7 +35,7 @@ class Snackbar {
                       style: const TextStyle(
                         color: Colors.white,
                       ),
-                      maxLines: 2,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

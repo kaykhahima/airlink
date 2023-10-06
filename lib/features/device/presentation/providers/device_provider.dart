@@ -1,5 +1,4 @@
 import 'package:airlink/features/device/data/models/characteristic_model.dart';
-import 'package:airlink/features/device/data/models/telemetry_model.dart';
 import 'package:airlink/features/device/domain/usecases/get_ble_devices.dart';
 import 'package:airlink/features/device/domain/usecases/usecase.dart';
 import 'package:flutter/foundation.dart';
@@ -14,14 +13,13 @@ import '../../domain/usecases/authorize_device.dart';
 import '../../domain/usecases/connect_to_ble_device.dart';
 import '../../domain/usecases/disconnect_ble_device.dart';
 import '../../domain/usecases/get_device_access_token.dart';
-import '../../domain/usecases/get_device_data.dart';
 import '../../domain/usecases/post_advertisement_data.dart';
 import '../../domain/usecases/provision_device.dart';
-import '../../domain/usecases/push_device_data.dart';
 import '../../domain/usecases/read_characteristic.dart';
 import '../../domain/usecases/save_advertisement_data.dart';
+import '../../domain/usecases/sync_gateway_and_device.dart';
+import '../../domain/usecases/sync_server_and_gateway.dart';
 import '../../domain/usecases/transfer_payg_token.dart';
-import '../../domain/usecases/upload_ble_data.dart';
 import '../../domain/usecases/write_characteristic.dart';
 
 class DeviceProvider extends ChangeNotifier {
@@ -34,11 +32,10 @@ class DeviceProvider extends ChangeNotifier {
   final ProvisionDevice provisionDevice;
   final GetDeviceAccessToken getDeviceAccessToken;
   final TransferPayGToken transferPayGToken;
-  final GetDeviceData getDeviceData;
-  final PushDeviceData pushDeviceData;
-  final UploadBLEData uploadBLEData;
   final SaveAdvertisementData saveAdvertisementData;
   final PostAdvertisementData postAdvertisementData;
+  final SyncGatewayAndDevice syncGatewayAndDevice;
+  final SyncServerAndGateway syncServerAndGateway;
 
   DeviceProvider({
     required this.disconnectBLEDevice,
@@ -50,11 +47,10 @@ class DeviceProvider extends ChangeNotifier {
     required this.provisionDevice,
     required this.getDeviceAccessToken,
     required this.transferPayGToken,
-    required this.getDeviceData,
-    required this.pushDeviceData,
-    required this.uploadBLEData,
     required this.saveAdvertisementData,
     required this.postAdvertisementData,
+    required this.syncGatewayAndDevice,
+    required this.syncServerAndGateway,
   });
 
   List<DeviceModel> _devices = [];
@@ -196,7 +192,6 @@ class DeviceProvider extends ChangeNotifier {
   Future<void> provision(
       {required BuildContext context,
       required ProvisionedDeviceModel provisionedDeviceModel}) async {
-
     //show loading
     Snackbar.show(
         context: context,
@@ -252,7 +247,6 @@ class DeviceProvider extends ChangeNotifier {
   //transfer payg token
   Future<void> transferToken(
       {required BuildContext context, required String paygToken}) async {
-
     //show loading
     Snackbar.show(
         context: context,
@@ -267,9 +261,9 @@ class DeviceProvider extends ChangeNotifier {
 
       //show success
       Snackbar.show(
-      context: context,
-      message: failure.toString(),
-      type: SnackbarType.error,
+        context: context,
+        message: failure.toString(),
+        type: SnackbarType.error,
       );
     }, (_) {
       //hide loading
@@ -285,110 +279,111 @@ class DeviceProvider extends ChangeNotifier {
   }
 
   //get device data
-  Future<void> getData(
-      {required BuildContext context, required String deviceName}) async {
-    //show loading
-    Snackbar.show(
-        context: context,
-        message: 'Getting data...',
-        type: SnackbarType.loading,
-        timeoutInSeconds: 120);
+  // Future<void> getData(
+  //     {required BuildContext context, required String deviceName}) async {
+  //   //show loading
+  //   Snackbar.show(
+  //       context: context,
+  //       message: 'Getting data...',
+  //       type: SnackbarType.loading,
+  //       timeoutInSeconds: 120);
+  //
+  //   final result = await getDeviceData(deviceName);
+  //
+  //   result.fold((failure) {
+  //     //hide loading
+  //     Snackbar.hide(context: context);
+  //
+  //     //show error
+  //     Snackbar.show(
+  //       context: context,
+  //       message: failure.toString(),
+  //       type: SnackbarType.error,
+  //     );
+  //   }, (data) {
+  //     //hide loading
+  //     Snackbar.hide(context: context);
+  //
+  //     //show success
+  //     Snackbar.show(
+  //       context: context,
+  //       message: 'Data saved',
+  //       type: SnackbarType.success,
+  //     );
+  //   });
+  // }
 
-    final result = await getDeviceData(deviceName);
+  // //push data from local db to BLE device
+  // Future<void> pushData(
+  //     {required BuildContext context, required String deviceName}) async {
+  //   //show loading
+  //   Snackbar.show(
+  //       context: context,
+  //       message: 'Transferring data...',
+  //       type: SnackbarType.loading,
+  //       timeoutInSeconds: 500);
+  //
+  //   final result = await pushDeviceData(deviceName);
+  //
+  //   result.fold((failure) {
+  //     //hide loading
+  //     Snackbar.hide(context: context);
+  //
+  //     //show error
+  //     Snackbar.show(
+  //       context: context,
+  //       message: failure.toString(),
+  //       type: SnackbarType.error,
+  //     );
+  //   }, (_) {
+  //     //hide loading
+  //     Snackbar.hide(context: context);
+  //
+  //     //show success
+  //     Snackbar.show(
+  //       context: context,
+  //       message: 'Data transferred',
+  //       type: SnackbarType.success,
+  //     );
+  //   });
+  // }
 
-    result.fold((failure) {
-      //hide loading
-      Snackbar.hide(context: context);
-
-      //show error
-      Snackbar.show(
-        context: context,
-        message: failure.toString(),
-        type: SnackbarType.error,
-      );
-    }, (data) {
-      //hide loading
-      Snackbar.hide(context: context);
-
-      //show success
-      Snackbar.show(
-        context: context,
-        message: 'Data saved',
-        type: SnackbarType.success,
-      );
-    });
-  }
-
-  //push data from local db to BLE device
-  Future<void> pushData(
-      {required BuildContext context, required String deviceName}) async {
-    //show loading
-    Snackbar.show(
-        context: context,
-        message: 'Transferring data...',
-        type: SnackbarType.loading,
-        timeoutInSeconds: 500);
-
-    final result = await pushDeviceData(deviceName);
-
-    result.fold((failure) {
-      //hide loading
-      Snackbar.hide(context: context);
-
-      //show error
-      Snackbar.show(
-        context: context,
-        message: failure.toString(),
-        type: SnackbarType.error,
-      );
-    }, (_) {
-      //hide loading
-      Snackbar.hide(context: context);
-
-      //show success
-      Snackbar.show(
-        context: context,
-        message: 'Data transferred',
-        type: SnackbarType.success,
-      );
-    });
-  }
-
-  //upload BLE data to server
-  Future<void> uploadBLEDeviceData(
-      {required BuildContext context,
-      required TelemetryModel telemetryModel}) async {
-    //show loading
-    Snackbar.show(
-        context: context,
-        message: 'Reading and uploading data...',
-        type: SnackbarType.loading,
-        timeoutInSeconds: 120);
-
-    final result = await uploadBLEData(telemetryModel);
-
-    result.fold((failure) {
-      //hide loading
-      Snackbar.hide(context: context);
-
-      //show error
-      Snackbar.show(
-        context: context,
-        message: failure.toString(),
-        type: SnackbarType.error,
-      );
-    }, (_) {
-      //hide loading
-      Snackbar.hide(context: context);
-
-      //show success
-      Snackbar.show(
-        context: context,
-        message: 'Data uploaded',
-        type: SnackbarType.success,
-      );
-    });
-  }
+  // //upload BLE data to server
+  // Future<void> uploadBLEDeviceData({
+  //   required BuildContext context,
+  //   required TelemetryModel telemetryModel,
+  // }) async {
+  //   //show loading
+  //   Snackbar.show(
+  //       context: context,
+  //       message: 'Reading and uploading data...',
+  //       type: SnackbarType.loading,
+  //       timeoutInSeconds: 120);
+  //
+  //   final result = await uploadBLEData(telemetryModel);
+  //
+  //   result.fold((failure) {
+  //     //hide loading
+  //     Snackbar.hide(context: context);
+  //
+  //     //show error
+  //     Snackbar.show(
+  //       context: context,
+  //       message: failure.toString(),
+  //       type: SnackbarType.error,
+  //     );
+  //   }, (_) {
+  //     //hide loading
+  //     Snackbar.hide(context: context);
+  //
+  //     //show success
+  //     Snackbar.show(
+  //       context: context,
+  //       message: 'Data uploaded',
+  //       type: SnackbarType.success,
+  //     );
+  //   });
+  // }
 
   //save advertisement data
   Future<void> saveAdvertData(
@@ -419,6 +414,81 @@ class DeviceProvider extends ChangeNotifier {
       if (kDebugMode) {
         print('Advertisement data posted');
       }
+    });
+  }
+
+  Future<void> gatewayAndDeviceSync({required BuildContext context, required String deviceName}) async {
+
+    //show loading
+    Snackbar.show(
+        context: context,
+        message: 'Syncing gateway and device...',
+        type: SnackbarType.loading,
+        timeoutInSeconds: 120);
+
+    final result = await syncGatewayAndDevice(deviceName);
+
+    result.fold((failure) {
+
+      //hide loading
+      Snackbar.hide(context: context);
+
+      if (kDebugMode) {
+        print(failure.toString());
+      }
+      //show error
+      Snackbar.show(
+        context: context,
+        message: failure.toString(),
+        type: SnackbarType.error,
+      );
+    }, (_) {
+      //hide loading
+      Snackbar.hide(context: context);
+
+      //show success
+      Snackbar.show(
+        context: context,
+        message: 'Successfully synced',
+        type: SnackbarType.success,
+      );
+    });
+  }
+
+  Future<void> serverAndGatewaySync({required BuildContext context, required String deviceName}) async {
+
+    //show loading
+    Snackbar.show(
+        context: context,
+        message: 'Syncing server and gateway...',
+        type: SnackbarType.loading,
+        timeoutInSeconds: 120);
+
+    final result = await syncServerAndGateway(deviceName);
+
+    result.fold((failure) {
+      //hide loading
+      Snackbar.hide(context: context);
+
+      if (kDebugMode) {
+        print(failure.toString());
+      }
+      //show error
+      Snackbar.show(
+        context: context,
+        message: failure.toString(),
+        type: SnackbarType.error,
+      );
+    }, (_) {
+      //hide loading
+      Snackbar.hide(context: context);
+
+      //show success
+      Snackbar.show(
+        context: context,
+        message: 'Successfully synced',
+        type: SnackbarType.success,
+      );
     });
   }
 }

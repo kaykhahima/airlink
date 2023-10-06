@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:airlink/core/api/api_service.dart';
+import 'package:airlink/core/api/airlink_api_service.dart';
 import 'package:airlink/core/errors/failures.dart';
 import 'package:airlink/core/utils/enums/enums.dart';
 import 'package:airlink/features/device/data/models/telemetry_model.dart';
@@ -83,9 +83,10 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
               entityId: entityId,
               scope: Scope.server,
               attributes: {
-                'device_secret': provisionedDeviceModel.deviceSecret,
+                'device_secret': provisionedDeviceModel.deviceSecret.toUpperCase(),
                 'msg_id': 0,
                 'payg_type': provisionedDeviceModel.type,
+                'product_code': provisionedDeviceModel.productCode,
               });
 
           if (saveAttributesRes.statusCode == 200) {

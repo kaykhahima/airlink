@@ -8,7 +8,7 @@ import 'package:airlink/core/utils/helper_functions.dart';
 import 'package:airlink/features/profile/data/data_sources/remote/profile_remote_data_source.dart';
 import 'package:airlink/features/profile/data/models/profile_model.dart';
 
-import '../../../../../core/api/api_service.dart';
+import '../../../../../core/api/airlink_api_service.dart';
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final DeviceInfo deviceInfo;

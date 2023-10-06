@@ -33,22 +33,16 @@ abstract class DeviceRepository {
   /// Transfer PayG Token
   Future<Either<Failure, void>> transferToken(String payGToken);
 
-  /// Get Data from Server to local DB
-  Future<Either<Failure, List<dynamic>>> getDeviceData(String deviceName);
-
-  /// Save Data from Server to local DB
-  Future<Either<Failure, void>> saveDeviceData(String deviceName, List data);
-
-  /// Push device data from local DB to BLE Device
-  Future<Either<Failure, void>> pushDeviceData(String deviceName);
-
-  /// Upload BLE Device data to server as timeseries
-  Future<Either<Failure, void>> uploadBLEDeviceData(Telemetry telemetry);
-
   /// Save Advertisement data
   Future<Either<Failure, void>> saveAdvertisementData(AdvertisementPacket advertisementPacket);
 
   /// Post Advertisement data
   Future<Either<Failure, void>> postAdvertisementData();
+
+  /// Syncs data between the AirLink server and the Gateway device (Local Storage)
+  Future<Either<Failure, void>> serverAndGatewaySync(String deviceName);
+
+  /// Syncs data between the Gateway device (Local Storage) and the BLE Device
+  Future<Either<Failure, void>> gatewayAndBLEDeviceSync(String deviceName);
 
 }

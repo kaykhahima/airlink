@@ -61,7 +61,7 @@ class _SearchFieldState extends State<SearchField> {
                     },
                   ),
           ],
-          hintText: 'Search device',
+          hintText: 'Search by name',
           onSubmitted: (deviceName) {
             tokenProvider.getDeviceSuggestions(
                 context: context, deviceName: deviceName);

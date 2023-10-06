@@ -8,7 +8,7 @@ import '../../data/models/provisioned_device_model.dart';
 
 class SerialNumberInputForm extends StatefulWidget {
   const SerialNumberInputForm(
-      {super.key, required this.serialNumberController, required this.ctx});
+      {super.key, required this.serialNumberController, required this.ctx,});
 
   final TextEditingController serialNumberController;
   final BuildContext ctx;
@@ -18,7 +18,8 @@ class SerialNumberInputForm extends StatefulWidget {
 }
 
 class _SerialNumberInputFormState extends State<SerialNumberInputForm> {
-  final _serialNumberFormKey = GlobalKey<FormState>();
+  final _provisioningFormKey = GlobalKey<FormState>();
+  final _productCodeController = TextEditingController();
 
   // Define the list of items for the dropdown
   final List<String> items = ['AirLink', 'Angaza', 'Solaris'];
@@ -64,7 +65,7 @@ class _SerialNumberInputFormState extends State<SerialNumberInputForm> {
           height: 16.0,
         ),
         Form(
-          key: _serialNumberFormKey,
+          key: _provisioningFormKey,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Column(
@@ -85,6 +86,22 @@ class _SerialNumberInputFormState extends State<SerialNumberInputForm> {
                           }
                           else if(!isInteger(int.parse(value))) {
                             return 'Must be an integer';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: InputField(
+                        controller: _productCodeController,
+                        labelText: 'Product code',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Product code is required';
                           }
                           return null;
                         },
@@ -138,7 +155,7 @@ class _SerialNumberInputFormState extends State<SerialNumberInputForm> {
                       child: FilledButton(
                         onPressed: () {
                           //if the input is valid
-                          if (_serialNumberFormKey.currentState!.validate()) {
+                          if (_provisioningFormKey.currentState!.validate()) {
 
                             //dismiss the dialog
                             Navigator.of(context).pop();
@@ -151,7 +168,8 @@ class _SerialNumberInputFormState extends State<SerialNumberInputForm> {
                               deviceSerialNumber:
                                   int.parse(widget.serialNumberController.text),
                               type: _selectedItem,
-                              deviceSecret: deviceSecret.toUpperCase(),
+                              deviceSecret: deviceSecret,
+                              productCode: _productCodeController.text,
                             );
 
                             //provision device

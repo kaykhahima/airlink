@@ -24,7 +24,7 @@ class ProfileProvider extends ChangeNotifier {
 
   String _gatewayDeviceId = '';
 
-  String get gatewayDeviceId => _gatewayDeviceId;
+  String get gatewayDeviceId => _gatewayDeviceId.toUpperCase();
 
   void provisionNewGateway(
       {required BuildContext context,

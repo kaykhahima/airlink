@@ -71,3 +71,11 @@ prepend(String jsonString, String descriptorValue) {
 
   return allData;
 }
+
+//encode credentials to base64 string
+String encodeCredentials(String username, String password) {
+  final String credentials = '$username:$password';
+  final List<int> utf8Bytes = utf8.encode(credentials);
+  final String base64String = base64Encode(utf8Bytes);
+  return base64String;
+}

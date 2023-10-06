@@ -49,7 +49,6 @@ class DeviceRepositoryImpl implements DeviceRepository {
     }
   }
 
-
   @override
   Future<Either<Failure, void>> authorizeDevice(Device bleDevice) async {
     try {
@@ -115,54 +114,6 @@ class DeviceRepositoryImpl implements DeviceRepository {
   }
 
   @override
-  Future<Either<Failure, List<dynamic>>> getDeviceData(String deviceName) async {
-    try {
-      final data = await _remoteDataSource.getDeviceData(deviceName);
-      await saveDeviceData(deviceName, data);
-      return Right(data);
-    } catch (e) {
-      return Left(BLEDeviceFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> pushDeviceData(String deviceName) async {
-    try {
-      await _localDataSource.pushDeviceData(deviceName);
-      return const Right(null);
-    } catch (e) {
-      return Left(BLEDeviceFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> saveDeviceData(String deviceName, List<dynamic> data) async {
-    try {
-      await _localDataSource.saveDeviceData(deviceName, data);
-      return const Right(null);
-    } catch (e) {
-      return Left(BLEDeviceFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> uploadBLEDeviceData(Telemetry telemetry) async {
-    try {
-      //get BLE data
-      final data = await _localDataSource.getBLEDeviceData();
-
-      //add data to telemetry model
-      final telemetryModel = TelemetryModel(deviceName: telemetry.deviceName, data: data);
-
-      //post data to server
-      await _remoteDataSource.postBLEData(telemetryModel);
-      return const Right(null);
-    } catch (e) {
-      return Left(BLEDeviceFailure(message: e.toString()));
-    }
-  }
-
-  @override
   Future<Either<Failure, void>> saveAdvertisementData(AdvertisementPacket advertisementPacket) async {
     try {
       await _localDataSource.saveAdvertisementData(AdvertisementPacketModel.fromEntity(advertisementPacket));
@@ -176,6 +127,56 @@ class DeviceRepositoryImpl implements DeviceRepository {
   Future<Either<Failure, void>> postAdvertisementData() async {
     try {
       await _remoteDataSource.postAdvertisementData();
+      return const Right(null);
+    } catch (e) {
+      return Left(AirLinkFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> gatewayAndBLEDeviceSync(String deviceName) async {
+    try {
+      //get timeseries data from BLE device
+      final timeseriesData = await _localDataSource.readDeviceTimeseriesData();
+
+      if(timeseriesData.isNotEmpty) {
+        //save timeseries data to local db
+        await _localDataSource.saveDeviceTimeseriesData(deviceName, timeseriesData);
+      }
+      //get device data (attributes) from local db
+      final dataList = await _localDataSource.getDeviceDataFromLocalStorage(deviceName);
+
+      if(dataList.isNotEmpty) {
+        //post device data to BLE device
+        await _localDataSource.pushDeviceData(dataList);
+      }
+      return const Right(null);
+
+    }
+    catch(e) {
+      return Left(AirLinkFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> serverAndGatewaySync(String deviceName) async {
+    try {
+      //gets device shared attributes data from airlink server
+      final data = await _remoteDataSource.getDeviceData(deviceName);
+
+      if(data.isNotEmpty) {
+        //save the attributes from airlink server to local db
+        await _localDataSource.saveDeviceData(deviceName, data);
+      }
+
+      //fetch telemetry data from local db
+      final telemetryData = await _localDataSource.getDeviceTimeseriesData(deviceName);
+
+      if(telemetryData.isNotEmpty) {
+        //post telemetry data to airlink server
+        await _remoteDataSource.postBLEData(TelemetryModel(deviceName: deviceName, data: telemetryData));
+      }
+
       return const Right(null);
     } catch (e) {
       return Left(AirLinkFailure(message: e.toString()));

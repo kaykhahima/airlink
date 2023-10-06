@@ -144,8 +144,6 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
   @override
   Future<List<DeviceModel>> getBLEDevices() async {
 
-    FlutterBluePlus.setLogLevel(LogLevel.verbose, color:false);
-
     if (await bluetoothInfo.isAvailable &&
         await bluetoothInfo.isScannable &&
         await locationInfo.isEnabled) {
@@ -421,13 +419,11 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
   }
 
   @override
-  Future<void> pushDeviceData(String deviceName) async {
+  Future<void> pushDeviceData(List dataList) async {
     if (_deviceModel == null) {
       throw const BLEDeviceFailure(message: 'Device not connected');
     }
     try {
-      //get data from attributes box
-      List dataList = _attributesBox.get(deviceName);
 
       if (dataList.isNotEmpty) {
         for (Map<String, dynamic> data in dataList) {
@@ -496,7 +492,28 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
   }
 
   @override
-  Future<List> getBLEDeviceData() async {
+  Future<void> saveAdvertisementData(AdvertisementPacketModel ad) async {
+    try {
+      _telemetryBox.put('advt_${ad.did}', ad.toMap());
+    }
+    catch (e) {
+      throw CacheFailure(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List> getDeviceTimeseriesData(String deviceName) async {
+    try {
+      List dataList = await _telemetryBox.get(deviceName);
+      return dataList;
+    }
+    catch (e) {
+      throw CacheFailure(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List> readDeviceTimeseriesData() async {
     if (_deviceModel == null) {
       throw const BLEDeviceFailure(message: 'Device not connected');
     }
@@ -543,7 +560,7 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
               } while (thiValue > 0);
             } else {
               String notTimeSeriesJsonData =
-                  prepend(jsonString, c.descriptorName);
+              prepend(jsonString, c.descriptorName);
               //add to List
               dataList.add(notTimeSeriesJsonData);
             }
@@ -560,9 +577,20 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
   }
 
   @override
-  Future<void> saveAdvertisementData(AdvertisementPacketModel ad) async {
+  Future<void> saveDeviceTimeseriesData(String deviceName, List data) async {
     try {
-      _telemetryBox.put('advt_${ad.did}', ad.toMap());
+      //save data to local storage
+      _telemetryBox.put(deviceName, data);
+    } catch (e) {
+      throw CacheFailure(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List> getDeviceDataFromLocalStorage(String deviceName) async {
+    try {
+      List dataList = await _attributesBox.get(deviceName);
+      return dataList;
     }
     catch (e) {
       throw CacheFailure(message: e.toString());

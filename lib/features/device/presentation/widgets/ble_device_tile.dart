@@ -33,6 +33,7 @@ class _BLEDeviceTileState extends State<BLEDeviceTile> {
                   widget.model.advertisementPacket))
         },
         child: Card(
+          color: Theme.of(context).colorScheme.primaryContainer,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Row(

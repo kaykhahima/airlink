@@ -79,6 +79,9 @@ class _GenerateTokenPageState extends State<GenerateTokenPage> {
                         ),
                       ),
                     ),
+              const SizedBox(
+                height: 16,
+              ),
               tokenDeviceProvider.selectedDevice == null
                   ? const SizedBox.shrink()
                   : Row(
@@ -86,43 +89,20 @@ class _GenerateTokenPageState extends State<GenerateTokenPage> {
                         Expanded(
                           child: tokenDeviceProvider.selectedDevice == null
                               ? const SizedBox.shrink()
-                              : SizedBox(
-                                  height: 70.0,
-                                  child: Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0, horizontal: 16.0),
-                                      child: Consumer<TokenDeviceProvider>(
-                                        builder: (context, tokenDeviceProvider,
-                                            child) {
-                                          return Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Consumer<TokenDeviceProvider>(
-                                                  builder: (context,
-                                                      tokenDeviceProvider, _) {
-                                                return Expanded(
-                                                  child: Text('Enter credit (days) for ${tokenDeviceProvider.selectedDevice!.name}',
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                );
-                                              }),
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    ),
+                              : Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                    'Enter credit (days) for ${tokenDeviceProvider.selectedDevice!.name}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
+                              ),
                         ),
                         const SizedBox(
                           width: 5.0,
                         ),
                         SizedBox(
-                          width: 75.0,
+                          width: 100.0,
                           child: TextFormField(
                             controller: _creditController,
                             keyboardType: TextInputType.number,
@@ -141,6 +121,9 @@ class _GenerateTokenPageState extends State<GenerateTokenPage> {
                         ),
                       ],
                     ),
+              const SizedBox(
+                height: 16,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -167,9 +150,12 @@ class _GenerateTokenPageState extends State<GenerateTokenPage> {
                                   }
 
                                   final tokenDeviceModel = TokenDeviceModel(
-                                      deviceUuid: selectedDevice.entityId,
-                                      numberOfDays:
-                                          int.parse(_creditController.text));
+                                    deviceUuid: selectedDevice.entityId,
+                                    numberOfDays:
+                                        int.parse(_creditController.text),
+                                    paygType: selectedDevice.paygType,
+                                    angazaUnitNumber: selectedDevice.angazaUnitNumber,
+                                  );
 
                                   Provider.of<TokenDeviceProvider>(context,
                                           listen: false)

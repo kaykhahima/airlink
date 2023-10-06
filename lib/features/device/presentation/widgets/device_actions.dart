@@ -1,6 +1,5 @@
 import 'package:airlink/core/utils/enums/enums.dart';
 import 'package:airlink/features/device/data/models/device_model.dart';
-import 'package:airlink/features/device/data/models/telemetry_model.dart';
 import 'package:airlink/features/device/presentation/widgets/input_field.dart';
 import 'package:airlink/features/device/presentation/widgets/provision_selection_bottomsheet.dart';
 import 'package:flutter/material.dart';
@@ -120,7 +119,7 @@ class _DeviceActionsState extends State<DeviceActions> {
                     ButtonSegment(
                         label: GestureDetector(
                           onTap: () {
-                            deviceProvider.getData(
+                            deviceProvider.serverAndGatewaySync(
                                 context: context,
                                 deviceName: widget
                                     .device.advertisementPacket.did
@@ -134,7 +133,7 @@ class _DeviceActionsState extends State<DeviceActions> {
                                 color: Theme.of(context).colorScheme.onPrimary,
                               ),
                               Icon(
-                                Icons.arrow_right_alt,
+                                Icons.sync_alt,
                                 color: Theme.of(context).colorScheme.onPrimary,
                               ),
                               Icon(
@@ -149,7 +148,7 @@ class _DeviceActionsState extends State<DeviceActions> {
                     ButtonSegment(
                       label: GestureDetector(
                         onTap: () {
-                          deviceProvider.pushData(
+                          deviceProvider.gatewayAndDeviceSync(
                             context: context,
                             deviceName: widget.device.advertisementPacket.did
                                 .toString(),
@@ -163,7 +162,7 @@ class _DeviceActionsState extends State<DeviceActions> {
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
                             Icon(
-                              Icons.arrow_right_alt,
+                              Icons.sync_alt,
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
                             Icon(
@@ -176,42 +175,47 @@ class _DeviceActionsState extends State<DeviceActions> {
                       value: Sync.phoneToDevice,
                       tooltip: 'Phone to BLE Device',
                     ),
-                    ButtonSegment(
-                      label: GestureDetector(
-                        onTap: () {
-                          final telemetryModel = TelemetryModel(
-                              deviceName: widget.device.advertisementPacket.did
-                                  .toString());
-                          deviceProvider.uploadBLEDeviceData(
-                              context: context, telemetryModel: telemetryModel);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Icon(
-                              Icons.memory,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                            Icon(
-                              Icons.arrow_right_alt,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                            Icon(
-                              Icons.cloud,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                          ],
-                        ),
-                      ),
-                      value: Sync.deviceToServer,
-                      tooltip: 'BLE Device to Server',
-                    ),
+                    // ButtonSegment(
+                    //   label: GestureDetector(
+                    //     onTap: () {
+                    //       final telemetryModel = TelemetryModel(
+                    //           deviceName: widget.device.advertisementPacket.did
+                    //               .toString());
+                    //       deviceProvider.uploadBLEDeviceData(
+                    //           context: context, telemetryModel: telemetryModel);
+                    //     },
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //       children: [
+                    //         Icon(
+                    //           Icons.memory,
+                    //           color: Theme.of(context).colorScheme.onPrimary,
+                    //         ),
+                    //         Icon(
+                    //           Icons.arrow_right_alt,
+                    //           color: Theme.of(context).colorScheme.onPrimary,
+                    //         ),
+                    //         Icon(
+                    //           Icons.cloud,
+                    //           color: Theme.of(context).colorScheme.onPrimary,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    //   value: Sync.deviceToServer,
+                    //   tooltip: 'BLE Device to Server',
+                    // ),
                   ],
                   style: ButtonStyle(
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     backgroundColor: MaterialStateProperty.all(
                         Theme.of(context).colorScheme.primary),
-                    side: MaterialStateProperty.all(BorderSide.none),
+                    side: MaterialStateProperty.all(
+                      BorderSide(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+
                   ),
                 ),
               ),

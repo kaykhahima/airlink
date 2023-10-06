@@ -32,13 +32,22 @@ abstract class DeviceLocalDataSource {
   Future<void> transferToken(String payGToken);
 
   /// Push device data from local DB to BLE Device
-  Future<void> pushDeviceData(String deviceName);
+  Future<void> pushDeviceData(List dataList);
+
+  /// Gets device data (attributes) from local storage
+  Future<List> getDeviceDataFromLocalStorage(String deviceName);
 
   /// Push device data from local DB to BLE Device
   Future<void> saveDeviceData(String deviceName, List<dynamic> data);
 
-  /// Get BLE Device data
-  Future<List> getBLEDeviceData();
+  /// Read timeseries data to BLE Device
+  Future<List> readDeviceTimeseriesData();
+
+  /// Save device data from local DB to BLE Device
+  Future<void> saveDeviceTimeseriesData(String deviceName, List data);
+
+  /// Get device time-series data from local storage
+  Future<List> getDeviceTimeseriesData(String deviceName);
 
   /// Save advertisement data
   Future<void> saveAdvertisementData(AdvertisementPacketModel advertisementPacketModel);

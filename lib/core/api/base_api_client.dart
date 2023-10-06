@@ -48,6 +48,9 @@ class BaseApiService {
       case Method.post:
         //call the post method
         return await http.post(uri, body: jsonEncode(body), headers: headers);
+
+      case Method.put:
+        return await http.put(uri, body: jsonEncode(body), headers: headers);
     }
   }
 }
