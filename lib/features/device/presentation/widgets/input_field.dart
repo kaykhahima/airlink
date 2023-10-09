@@ -24,31 +24,23 @@ class InputField extends StatefulWidget {
 class _InputFieldState extends State<InputField> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2.0),
-          child: SizedBox(
-            height: 50.0,
-            child: TextFormField(
-              controller: widget.controller,
-              keyboardType: widget.keyboardType,
-              obscureText: widget.obscureText,
-              decoration: InputDecoration(
-                labelText: widget.labelText,
-                labelStyle: const TextStyle(
-                  fontSize: 15.0,
-                ),
-                isDense: true,
-              ),
-              validator: widget.validator,
-            ),
-          ),
+    return TextFormField(
+      controller: widget.controller,
+      keyboardType: widget.keyboardType,
+      obscureText: widget.obscureText,
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        labelText: widget.labelText,
+        labelStyle: const TextStyle(
+          fontSize: 15.0,
         ),
-        const SizedBox(
-          height: 12.0,
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 12.0,
+          horizontal: 12.0,
         ),
-      ],
+        isDense: true,
+      ),
+      validator: widget.validator,
     );
   }
 }

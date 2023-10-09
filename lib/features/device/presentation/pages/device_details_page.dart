@@ -58,6 +58,7 @@ class _DeviceDetailsPageState extends State<DeviceDetailsPage> {
                     if (connectedDevice != null) {
                       return StreamBuilder<BluetoothConnectionState>(
                           stream: connectedDevice.device.connectionState,
+                          initialData: BluetoothConnectionState.connected,
                           builder: (context, state) {
                             if (state.data ==
                                 BluetoothConnectionState.connected) {

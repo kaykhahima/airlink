@@ -16,12 +16,13 @@ class DeviceData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
         children: [
+          //all buttons are here in this widget
           DeviceActions(device: connectedDevice),
           const SizedBox(
-            height: 24.0,
+            height: 8.0,
           ),
           const Text('Resources'),
           const SizedBox(

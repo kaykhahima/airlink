@@ -426,7 +426,7 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
     try {
 
       if (dataList.isNotEmpty) {
-        for (Map<String, dynamic> data in dataList) {
+        for (Map data in dataList) {
           //get key
           String key = data['key'];
 
@@ -478,6 +478,7 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
         throw const CacheFailure(message: 'No data available');
       }
     } catch (e) {
+      print(e.toString());
       throw const BLEDeviceFailure(message: 'Failed to push data');
     }
   }

@@ -54,175 +54,190 @@ class _DeviceActionsState extends State<DeviceActions> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        buildManufacturerActionsCard(context),
+        buildDeviceUserActionsCard(context),
+      ],
+    );
+  }
+
+  Card buildManufacturerActionsCard(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              flex: 3,
-              child: ActionButton(
-                onPressed: () => deviceProvider.authorize(
-                  context: context,
-                  device: widget.device,
+            Text(
+              'Manufacturer',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 12.0),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: InputField(
+                    controller: _accessTokenController,
+                    labelText: 'Access token',
+                  ),
                 ),
-                label: 'Authorize',
-              ),
+              ],
             ),
-            Expanded(
-              flex: 4,
-              child: InputField(
-                controller: _accessTokenController,
-                labelText: 'Access token',
-              ),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Expanded(
-              flex: 3,
-              child: ActionButton(
-                onPressed: () => _showProvisionChoices(
-                    ctx: context, device: widget.device),
-                label: 'Provision',
-              ),
-            ),
-            Expanded(
-              flex: 4,
-              child: ActionButton(
-                onPressed: () {
-                  _showPayGTokenInputDialog(context);
-                },
-                label: 'Transfer PayG Token',
-              ),
+            const SizedBox(height: 8.0),
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: ActionButton(
+                    onPressed: () => deviceProvider.authorize(
+                      context: context,
+                      device: widget.device,
+                    ),
+                    label: 'Authorize',
+                  ),
+                ),
+                //if device is already provisioned, don't show the provision button
+                widget.device.advertisementPacket.pst <= 3
+                    ? Expanded(
+                        flex: 2,
+                        child: ActionButton(
+                          onPressed: () => _showProvisionChoices(
+                              ctx: context, device: widget.device),
+                          label: 'Provision',
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ],
             ),
           ],
         ),
-        const Row(
+      ),
+    );
+  }
+
+  Card buildDeviceUserActionsCard(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text('Sync'),
+            Text(
+              'Device User',
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-          ],
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 3.0, vertical: 8.0),
-                child: SegmentedButton(
-                  selected: <Sync>{_selectedSync},
-                  showSelectedIcon: false,
-                  segments: <ButtonSegment<Sync>>[
-                    ButtonSegment(
-                        label: GestureDetector(
-                          onTap: () {
-                            deviceProvider.serverAndGatewaySync(
+            const SizedBox(height: 12.0),
+            const Text('Sync'),
+            Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(3.0),
+                    child: SegmentedButton(
+                      selected: <Sync>{_selectedSync},
+                      showSelectedIcon: false,
+                      segments: <ButtonSegment<Sync>>[
+                        ButtonSegment(
+                            label: GestureDetector(
+                              onTap: () {
+                                deviceProvider.serverAndGatewaySync(
+                                    context: context,
+                                    deviceName: widget
+                                        .device.advertisementPacket.did
+                                        .toString());
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Icon(
+                                    Icons.cloud,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                                  Icon(
+                                    Icons.sync_alt,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                                  Icon(
+                                    Icons.phone_android,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value: Sync.serverToPhone,
+                            tooltip: 'Server - Phone Sync'),
+                        ButtonSegment(
+                          label: GestureDetector(
+                            onTap: () {
+                              deviceProvider.gatewayAndDeviceSync(
                                 context: context,
                                 deviceName: widget
                                     .device.advertisementPacket.did
-                                    .toString());
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(
-                                Icons.cloud,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                              Icon(
-                                Icons.sync_alt,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                              Icon(
-                                Icons.phone_android,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                            ],
+                                    .toString(),
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Icon(
+                                  Icons.phone_android,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                                Icon(
+                                  Icons.sync_alt,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                                Icon(
+                                  Icons.memory,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                              ],
+                            ),
+                          ),
+                          value: Sync.phoneToDevice,
+                          tooltip: 'Phone - BLE Device Sync',
+                        ),
+                      ],
+                      style: ButtonStyle(
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        backgroundColor: MaterialStateProperty.all(
+                            Theme.of(context).colorScheme.primary),
+                        side: MaterialStateProperty.all(
+                          BorderSide(
+                            color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         ),
-                        value: Sync.serverToPhone,
-                        tooltip: 'Server to Phone'),
-                    ButtonSegment(
-                      label: GestureDetector(
-                        onTap: () {
-                          deviceProvider.gatewayAndDeviceSync(
-                            context: context,
-                            deviceName: widget.device.advertisementPacket.did
-                                .toString(),
-                          );
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Icon(
-                              Icons.phone_android,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                            Icon(
-                              Icons.sync_alt,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                            Icon(
-                              Icons.memory,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                          ],
-                        ),
-                      ),
-                      value: Sync.phoneToDevice,
-                      tooltip: 'Phone to BLE Device',
-                    ),
-                    // ButtonSegment(
-                    //   label: GestureDetector(
-                    //     onTap: () {
-                    //       final telemetryModel = TelemetryModel(
-                    //           deviceName: widget.device.advertisementPacket.did
-                    //               .toString());
-                    //       deviceProvider.uploadBLEDeviceData(
-                    //           context: context, telemetryModel: telemetryModel);
-                    //     },
-                    //     child: Row(
-                    //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //       children: [
-                    //         Icon(
-                    //           Icons.memory,
-                    //           color: Theme.of(context).colorScheme.onPrimary,
-                    //         ),
-                    //         Icon(
-                    //           Icons.arrow_right_alt,
-                    //           color: Theme.of(context).colorScheme.onPrimary,
-                    //         ),
-                    //         Icon(
-                    //           Icons.cloud,
-                    //           color: Theme.of(context).colorScheme.onPrimary,
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    //   value: Sync.deviceToServer,
-                    //   tooltip: 'BLE Device to Server',
-                    // ),
-                  ],
-                  style: ButtonStyle(
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    backgroundColor: MaterialStateProperty.all(
-                        Theme.of(context).colorScheme.primary),
-                    side: MaterialStateProperty.all(
-                      BorderSide(
-                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
-
                   ),
                 ),
-              ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: ActionButton(
+                    onPressed: () {
+                      _showPayGTokenInputDialog(context);
+                    },
+                    label: 'Transfer PayG Token',
+                  ),
+                ),
+              ],
             ),
           ],
         ),
-      ],
+      ),
     );
   }
 
@@ -233,7 +248,8 @@ class _DeviceActionsState extends State<DeviceActions> {
       useSafeArea: true,
       context: context,
       builder: (context) => ProvisionChoicesBottomSheet(
-        deviceModel: device, ctx: ctx,
+        deviceModel: device,
+        ctx: ctx,
       ),
     );
   }
@@ -242,7 +258,7 @@ class _DeviceActionsState extends State<DeviceActions> {
     //show dialog to enter serial number
     showDialog(
       context: context,
-      builder: (context) =>  InputPayGTokenDialog(ctx: ctx),
+      builder: (context) => InputPayGTokenDialog(ctx: ctx),
     );
   }
 }

@@ -111,9 +111,9 @@ class _HomePageState extends State<HomePage> {
   ];
 
   final List<String> _titles = <String>[
-    'Tenant Admin',
-    'Client',
-    'Manufacturer',
+    'Distributor/Tenant Admin',
+    'Device User/Admin',
+    'Credentials',
   ];
 
   void _onItemTapped(int index) {
@@ -131,7 +131,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('AirLink - ${_titles.elementAt(_selectedIndex)}'),
+        title: Text(_titles.elementAt(_selectedIndex)),
       ),
       body: Container(
         child: _widgetOptions.elementAt(_selectedIndex),
@@ -139,7 +139,7 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.timeline),
+            icon: Icon(Icons.toll),
             label: 'PayG Token',
           ),
           BottomNavigationBarItem(

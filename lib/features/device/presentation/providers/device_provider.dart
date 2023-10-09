@@ -80,6 +80,7 @@ class DeviceProvider extends ChangeNotifier {
         }).toList();
 
   Future<void> getDevices({required BuildContext context}) async {
+    print('callled');
     final result = await getBLEDevices(NoParams());
     result.fold((failure) {
       Snackbar.show(

@@ -73,6 +73,10 @@ class _AngazaCredentialsFormState extends State<AngazaCredentialsForm> {
               key: _angazaCredentialsFormKey,
               child: ListView(
                 children: [
+                  Text(
+                    'Distributor API Access',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                   const SizedBox(
                     height: 12.0,
                   ),
