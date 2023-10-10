@@ -143,9 +143,9 @@ class DeviceRepositoryImpl implements DeviceRepository {
         await _localDataSource.saveDeviceTimeseriesData(deviceName, timeseriesData);
       }
       //get device data (attributes) from local db
-      final dataList = await _localDataSource.getDeviceDataFromLocalStorage(deviceName);
+      List<dynamic>? dataList = await _localDataSource.getDeviceDataFromLocalStorage(deviceName);
 
-      if(dataList.isNotEmpty) {
+      if(dataList != null && dataList.isNotEmpty) {
         //post device data to BLE device
         await _localDataSource.pushDeviceData(dataList);
       }
@@ -177,7 +177,8 @@ class DeviceRepositoryImpl implements DeviceRepository {
       }
 
       return const Right(null);
-    } catch (e) {
+    } catch (e, st) {
+      print(st.toString());
       return Left(AirLinkFailure(message: e.toString()));
     }
   }

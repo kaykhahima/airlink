@@ -83,6 +83,7 @@ class _PaygTokenInputFormState extends State<PaygTokenInputForm> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 8.0,),
                 Row(
                   children: [
                     Expanded(

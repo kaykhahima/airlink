@@ -56,13 +56,60 @@ class _DeviceActionsState extends State<DeviceActions> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildManufacturerActionsCard(context),
-        buildDeviceUserActionsCard(context),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildAuthorizeWidget(),
+            ],
+          ),
+        ),
+        //if device is already provisioned, don't show the provision button
+        widget.device.advertisementPacket.pst <= 3
+            ? buildManufacturerActionsCard()
+            : const SizedBox.shrink(),
+        buildDeviceUserActionsCard(),
       ],
     );
   }
 
-  Card buildManufacturerActionsCard(BuildContext context) {
+  Column buildAuthorizeWidget() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            widget.device.advertisementPacket.pst >= 3 ? Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: InputField(
+                  controller: _accessTokenController,
+                  labelText: 'Access token',
+                ),
+              ),
+            ) : const SizedBox.shrink(),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: ActionButton(
+                onPressed: () => deviceProvider.authorize(
+                  context: context,
+                  device: widget.device,
+                ),
+                label: 'Authorize',
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Card buildManufacturerActionsCard() {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -73,42 +120,16 @@ class _DeviceActionsState extends State<DeviceActions> {
               'Manufacturer',
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            const SizedBox(height: 12.0),
             Row(
               children: [
                 Expanded(
                   flex: 1,
-                  child: InputField(
-                    controller: _accessTokenController,
-                    labelText: 'Access token',
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8.0),
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
                   child: ActionButton(
-                    onPressed: () => deviceProvider.authorize(
-                      context: context,
-                      device: widget.device,
-                    ),
-                    label: 'Authorize',
+                    onPressed: () => _showProvisionChoices(
+                        ctx: context, device: widget.device),
+                    label: 'Provision',
                   ),
                 ),
-                //if device is already provisioned, don't show the provision button
-                widget.device.advertisementPacket.pst <= 3
-                    ? Expanded(
-                        flex: 2,
-                        child: ActionButton(
-                          onPressed: () => _showProvisionChoices(
-                              ctx: context, device: widget.device),
-                          label: 'Provision',
-                        ),
-                      )
-                    : const SizedBox.shrink(),
               ],
             ),
           ],
@@ -117,7 +138,7 @@ class _DeviceActionsState extends State<DeviceActions> {
     );
   }
 
-  Card buildDeviceUserActionsCard(BuildContext context) {
+  Card buildDeviceUserActionsCard() {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),

@@ -93,6 +93,9 @@ class _SerialNumberInputFormState extends State<SerialNumberInputForm> {
                     ),
                   ],
                 ),
+                const SizedBox(
+                  height: 10.0,
+                ),
                 Row(
                   children: [
                     Expanded(
@@ -130,6 +133,9 @@ class _SerialNumberInputFormState extends State<SerialNumberInputForm> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(
+                  height: 10.0,
                 ),
                 Row(
                   children: [

@@ -432,10 +432,10 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
 
           //get the name (descriptor's) before the underscore
           List<String> parts = key.split('_');
-          String descName = parts.first;
+          String descName = parts.first.toLowerCase();
 
           //get the name after the underscore
-          String propKey = parts.last;
+          String propKey = parts.last.toLowerCase();
 
           late dynamic value;
 
@@ -508,7 +508,8 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
       List dataList = await _telemetryBox.get(deviceName);
       return dataList;
     }
-    catch (e) {
+    catch (e, st) {
+      print(st.toString());
       throw CacheFailure(message: e.toString());
     }
   }
@@ -582,18 +583,20 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
     try {
       //save data to local storage
       _telemetryBox.put(deviceName, data);
-    } catch (e) {
+    } catch (e, st) {
+      print(st.toString());
       throw CacheFailure(message: e.toString());
     }
   }
 
   @override
-  Future<List> getDeviceDataFromLocalStorage(String deviceName) async {
+  Future<List>? getDeviceDataFromLocalStorage(String deviceName) async {
     try {
-      List dataList = await _attributesBox.get(deviceName);
-      return dataList;
+      List? dataList = await _attributesBox.get(deviceName);
+      return dataList ?? [];
     }
-    catch (e) {
+    catch (e, st) {
+      print(st.toString());
       throw CacheFailure(message: e.toString());
     }
   }

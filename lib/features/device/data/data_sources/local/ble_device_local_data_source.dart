@@ -35,7 +35,7 @@ abstract class DeviceLocalDataSource {
   Future<void> pushDeviceData(List dataList);
 
   /// Gets device data (attributes) from local storage
-  Future<List> getDeviceDataFromLocalStorage(String deviceName);
+  Future<List>? getDeviceDataFromLocalStorage(String deviceName);
 
   /// Push device data from local DB to BLE Device
   Future<void> saveDeviceData(String deviceName, List<dynamic> data);
