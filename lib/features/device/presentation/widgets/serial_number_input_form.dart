@@ -5,10 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/models/provisioned_device_model.dart';
+import 'barcode_scanner_dialog.dart';
 
 class SerialNumberInputForm extends StatefulWidget {
-  const SerialNumberInputForm(
-      {super.key, required this.serialNumberController, required this.ctx,});
+  const SerialNumberInputForm({
+    super.key,
+    required this.serialNumberController,
+    required this.ctx,
+  });
 
   final TextEditingController serialNumberController;
   final BuildContext ctx;
@@ -78,13 +82,27 @@ class _SerialNumberInputFormState extends State<SerialNumberInputForm> {
                         controller: widget.serialNumberController,
                         keyboardType: TextInputType.number,
                         labelText: 'Serial Number',
+                        suffixIcon: Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              left: BorderSide(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                            ),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.barcode_reader),
+                            onPressed: () =>
+                                _showBarcodeDialog(context: widget.ctx),
+                          ),
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Serial number is required';
                           } else if (value.length < 5 || value.length > 10) {
                             return 'Must be 5-10 characters long';
-                          }
-                          else if(!isInteger(int.parse(value))) {
+                          } else if (!isInteger(int.parse(value))) {
                             return 'Must be an integer';
                           }
                           return null;
@@ -162,7 +180,6 @@ class _SerialNumberInputFormState extends State<SerialNumberInputForm> {
                         onPressed: () {
                           //if the input is valid
                           if (_provisioningFormKey.currentState!.validate()) {
-
                             //dismiss the dialog
                             Navigator.of(context).pop();
 
@@ -179,12 +196,12 @@ class _SerialNumberInputFormState extends State<SerialNumberInputForm> {
                             );
 
                             //provision device
-                            Provider.of<DeviceProvider>(widget.ctx, listen: false)
+                            Provider.of<DeviceProvider>(widget.ctx,
+                                    listen: false)
                                 .provision(
                               context: widget.ctx,
                               provisionedDeviceModel: provisionedDeviceModel,
                             );
-
                           }
                         },
                         child: const FittedBox(
@@ -210,6 +227,19 @@ class _SerialNumberInputFormState extends State<SerialNumberInputForm> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showBarcodeDialog({required BuildContext context}) {
+    //dismiss previous dialog
+    Navigator.pop(context);
+
+    //show dialog to scan barcode
+    showDialog(
+      context: context,
+      builder: (context) => BarcodeScannerDialog(
+        ctx: widget.ctx,
+      ),
     );
   }
 }

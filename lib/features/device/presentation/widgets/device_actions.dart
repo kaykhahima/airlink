@@ -1,12 +1,12 @@
 import 'package:airlink/core/utils/enums/enums.dart';
 import 'package:airlink/features/device/data/models/device_model.dart';
 import 'package:airlink/features/device/presentation/widgets/input_field.dart';
-import 'package:airlink/features/device/presentation/widgets/provision_selection_bottomsheet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/device_provider.dart';
 import 'action_button.dart';
 import 'input_payg_token_dialog.dart';
+import 'input_serial_number_dialog.dart';
 
 class DeviceActions extends StatefulWidget {
   const DeviceActions({super.key, required this.device});
@@ -125,8 +125,7 @@ class _DeviceActionsState extends State<DeviceActions> {
                 Expanded(
                   flex: 1,
                   child: ActionButton(
-                    onPressed: () => _showProvisionChoices(
-                        ctx: context, device: widget.device),
+                    onPressed: () => _showSerialNumberInputDialog(context),
                     label: 'Provision',
                   ),
                 ),
@@ -262,24 +261,18 @@ class _DeviceActionsState extends State<DeviceActions> {
     );
   }
 
-  void _showProvisionChoices(
-      {required BuildContext ctx, required DeviceModel device}) {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      useSafeArea: true,
-      context: context,
-      builder: (context) => ProvisionChoicesBottomSheet(
-        deviceModel: device,
-        ctx: ctx,
-      ),
-    );
-  }
-
   void _showPayGTokenInputDialog(BuildContext ctx) {
     //show dialog to enter serial number
     showDialog(
       context: context,
       builder: (context) => InputPayGTokenDialog(ctx: ctx),
     );
+  }
+
+  void _showSerialNumberInputDialog(BuildContext ctx) {
+    //show dialog to enter serial number
+    showDialog(
+        context: context,
+        builder: (context) => InputSerialNumberDialog(ctx: ctx,));
   }
 }

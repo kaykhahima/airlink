@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class InputField extends StatefulWidget {
-
   const InputField({
     super.key,
     required this.controller,
@@ -9,6 +8,7 @@ class InputField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
     this.validator,
+    this.suffixIcon,
   });
 
   final TextEditingController controller;
@@ -16,6 +16,7 @@ class InputField extends StatefulWidget {
   final TextInputType keyboardType;
   final bool obscureText;
   final String? Function(String?)? validator;
+  final Widget? suffixIcon;
 
   @override
   State<InputField> createState() => _InputFieldState();
@@ -38,6 +39,7 @@ class _InputFieldState extends State<InputField> {
           vertical: 12.0,
           horizontal: 12.0,
         ),
+        suffixIcon: widget.suffixIcon,
         isDense: true,
       ),
       validator: widget.validator,
