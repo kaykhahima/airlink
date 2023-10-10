@@ -89,7 +89,7 @@ class _AirLinkCredentialsFormState extends State<AirLinkCredentialsForm> {
               child: ListView(
                 children: [
                   Text(
-                    'Tenant/Device Admin',
+                    'Device/Tenant Admin',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(

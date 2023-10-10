@@ -143,7 +143,7 @@ class _HomePageState extends State<HomePage> {
             label: 'PayG Token',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
+            icon: Icon(Icons.memory),
             label: 'Device List',
           ),
           BottomNavigationBarItem(

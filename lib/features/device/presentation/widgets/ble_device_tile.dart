@@ -20,9 +20,9 @@ class _BLEDeviceTileState extends State<BLEDeviceTile> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-        bottom: 8.0,
-        left: 16.0,
-        right: 16.0,
+        bottom: 4.0,
+        left: 12.0,
+        right: 12.0,
       ),
       child: GestureDetector(
         onTap: widget.onTap,
