@@ -16,7 +16,6 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'core/api/airlink_api_service.dart';
 import 'core/api/angaza_base_client.dart';
 import 'core/bluetooth/bluetooth_info.dart';
-import 'core/environment/dot_env.dart';
 import 'core/location/location_info.dart';
 import 'core/network/network_info.dart';
 import 'core/storage/storage.dart';
@@ -68,9 +67,6 @@ void initializeDependencies() {
 
   //get instance of LocationInfo
   final locationInfo = LocationInfoImpl();
-
-  //get environment
-  final environment = EnvironmentImpl();
 
   //get secure storage
   final secureStorage = SecureStorageImpl();
@@ -127,8 +123,8 @@ void initializeDependencies() {
   final deviceLocalDataSource = BLEDeviceLocalDataSourceImpl(
     bluetoothInfo: bluetoothInfo,
     locationInfo: locationInfo,
-    environment: environment,
     secureStorage: secureStorage,
+    deviceInfo: deviceInfo,
   );
 
   final deviceRemoteDataSource = DeviceRemoteDataSourceImpl(

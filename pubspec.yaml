@@ -30,7 +30,6 @@ dependencies:
   internet_connection_checker: ^1.0.0+1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  flutter_dotenv: ^5.1.0
   flutter_blue_plus: ^1.16.2
 
 dev_dependencies:
@@ -42,6 +41,3 @@ dev_dependencies:
 flutter:
 
   uses-material-design: true
-
-  assets:
-    - .env

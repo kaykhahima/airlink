@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:hive/hive.dart';
 
-import '../../../../../core/environment/dot_env.dart';
+import '../../../../../core/device_info/device_info.dart';
 import '../../../../../core/storage/storage.dart';
 import '../../../../../core/utils/helper_functions.dart';
 import '../../models/device_model.dart';
@@ -25,20 +25,21 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
 
   final LocationInfo locationInfo;
 
-  final Environment environment;
-
   final SecureStorage secureStorage;
+
+  final DeviceInfo deviceInfo;
 
   BLEDeviceLocalDataSourceImpl({
     required this.bluetoothInfo,
     required this.locationInfo,
-    required this.environment,
     required this.secureStorage,
+    required this.deviceInfo,
   });
 
   //get the references to the storage boxes
   final _telemetryBox = Hive.box('telemetry');
   final _attributesBox = Hive.box('attributes');
+  final _profileBox = Hive.box('profiles');
 
   //list of BLE devices
   final List<DeviceModel> _bleDevices = [];
@@ -251,7 +252,11 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
       String? accessToken;
       if (provisionStatus < 3) {
         //get the access token
-        accessToken = await environment.get('DEFAULT_SERVER_ACCESS_TOKEN');
+        // accessToken = await environment.get('DEFAULT_SERVER_ACCESS_TOKEN');
+        //todo: get from profile box
+        //get android device id
+        final androidDeviceId = await deviceInfo.androidDeviceId;
+        accessToken =  _profileBox.get(androidDeviceId)['defaultAccessToken'];
       } else {
         //get device access token
         accessToken = await secureStorage

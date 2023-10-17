@@ -55,9 +55,9 @@ class TokenManager {
     //get profile data
     final profileModel = await sl<ProfileLocalDataSourceImpl>().getProfile();
 
-    final String baseUrl = profileModel.airlinkServerUrl;
-    final String email = profileModel.email;
-    final String password = profileModel.password;
+    final String baseUrl = profileModel.airlinkServerUrl!;
+    final String email = profileModel.email!;
+    final String password = profileModel.password!;
 
     //encode contents
     final contents = jsonEncode({'username': email, 'password': password});

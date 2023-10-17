@@ -21,6 +21,7 @@ class _AirLinkCredentialsFormState extends State<AirLinkCredentialsForm> {
   final _passwordController = TextEditingController();
   final _deviceProfileIdController = TextEditingController();
   final _gatewayProfileIdController = TextEditingController();
+  final _defaultAccessTokenController = TextEditingController();
 
   final GlobalKey<FormState> _profileFormKey = GlobalKey<FormState>();
 
@@ -33,6 +34,7 @@ class _AirLinkCredentialsFormState extends State<AirLinkCredentialsForm> {
         password: _passwordController.text,
         deviceProfileId: _deviceProfileIdController.text,
         gatewayProfileId: _gatewayProfileIdController.text,
+        defaultAccessToken: _defaultAccessTokenController.text,
       );
 
       //get provider
@@ -65,6 +67,7 @@ class _AirLinkCredentialsFormState extends State<AirLinkCredentialsForm> {
     _passwordController.dispose();
     _deviceProfileIdController.dispose();
     _gatewayProfileIdController.dispose();
+    _defaultAccessTokenController.dispose();
   }
 
   @override
@@ -75,11 +78,12 @@ class _AirLinkCredentialsFormState extends State<AirLinkCredentialsForm> {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {
               final profileModel = snapshot.data as ProfileModel;
-              _serverUrlController.text = profileModel.airlinkServerUrl;
-              _emailController.text = profileModel.email;
-              _passwordController.text = profileModel.password;
-              _deviceProfileIdController.text = profileModel.deviceProfileId;
-              _gatewayProfileIdController.text = profileModel.gatewayProfileId;
+              _serverUrlController.text = profileModel.airlinkServerUrl ?? '';
+              _emailController.text = profileModel.email ?? '';
+              _passwordController.text = profileModel.password ?? '';
+              _deviceProfileIdController.text = profileModel.deviceProfileId ?? '';
+              _gatewayProfileIdController.text = profileModel.gatewayProfileId ?? '';
+              _defaultAccessTokenController.text = profileModel.defaultAccessToken ?? '';
             }
           }
           return Padding(
@@ -123,6 +127,12 @@ class _AirLinkCredentialsFormState extends State<AirLinkCredentialsForm> {
                     controller: _gatewayProfileIdController,
                     labelText: 'Gateway profile ID',
                     helperText: 'e.g. 4034f6e0-5d81-11ec-a661-4bb15f6c2dec',
+                  ),
+                  InputField(
+                    controller: _defaultAccessTokenController,
+                    labelText: 'Default access token',
+                    helperText: 'Embed this token in the firmware',
+                    obscureText: true,
                   ),
                   FilledButton(
                     onPressed: () async {

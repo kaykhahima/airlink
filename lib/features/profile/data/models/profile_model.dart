@@ -7,6 +7,7 @@ class ProfileModel extends Profile {
     required super.password,
     required super.deviceProfileId,
     required super.gatewayProfileId,
+    required super.defaultAccessToken,
   });
 
   factory ProfileModel.fromEntity(Profile profile) {
@@ -16,6 +17,7 @@ class ProfileModel extends Profile {
       password: profile.password,
       deviceProfileId: profile.deviceProfileId,
       gatewayProfileId: profile.gatewayProfileId,
+      defaultAccessToken: profile.defaultAccessToken,
     );
   }
 
@@ -26,6 +28,7 @@ class ProfileModel extends Profile {
       'password': password,
       'deviceProfileId': deviceProfileId,
       'gatewayProfileId': gatewayProfileId,
+      'defaultAccessToken': defaultAccessToken,
     };
   }
 
@@ -36,6 +39,7 @@ class ProfileModel extends Profile {
       password: profile['password'],
       deviceProfileId: profile['deviceProfileId'],
       gatewayProfileId: profile['gatewayProfileId'],
+      defaultAccessToken: profile['defaultAccessToken'],
     );
   }
 

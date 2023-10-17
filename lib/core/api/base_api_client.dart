@@ -24,7 +24,7 @@ class BaseApiService {
     final profileModel = await sl<ProfileLocalDataSourceImpl>().getProfile();
 
     //get base url
-    final String baseUrl = profileModel.airlinkServerUrl;
+    final String baseUrl = profileModel.airlinkServerUrl!;
 
     //get uri
     var uri = Uri.parse('$baseUrl/api/$endpointPostModifier');

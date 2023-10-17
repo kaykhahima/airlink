@@ -4,7 +4,6 @@ import 'package:airlink/providers.dart';
 import 'package:airlink/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
@@ -66,9 +65,6 @@ void main() async {
 
   //initialize service locator
   initializeDependencies();
-
-  //load .env file
-  await dotenv.load(fileName: ".env");
 
   //run background task
   postAdvtData();
