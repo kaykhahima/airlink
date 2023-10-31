@@ -29,7 +29,6 @@ class TokenDeviceProvider extends ChangeNotifier {
   DeviceSuggestionModel? get selectedDevice => _selectedDevice;
 
   //return suggestions that payg_type is not empty
-  //todo: remove this when it can be done by the endpoint
   List<DeviceSuggestionModel> get filteredSuggestions =>
       _suggestions
           .where((element) => element.paygType.isNotEmpty)

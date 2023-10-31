@@ -251,11 +251,9 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
       //if device is not provisioned, use a default access token to authorize
       String? accessToken;
       if (provisionStatus < 3) {
-        //get the access token
-        // accessToken = await environment.get('DEFAULT_SERVER_ACCESS_TOKEN');
-        //todo: get from profile box
         //get android device id
         final androidDeviceId = await deviceInfo.androidDeviceId;
+        //get the access token
         accessToken =  _profileBox.get(androidDeviceId)['defaultAccessToken'];
       } else {
         //get device access token
