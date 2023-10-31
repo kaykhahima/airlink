@@ -230,11 +230,7 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
           );
 
           //if access token is not null, device is known
-          if (accessToken != null) {
-            deviceKnown = true;
-          } else {
-            deviceKnown = false;
-          }
+          deviceKnown = accessToken != null;
 
           //set contents based on whether device is known or not
           String contents = deviceKnown
