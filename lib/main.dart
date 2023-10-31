@@ -151,16 +151,32 @@ class _HomePageState extends State<HomePage> {
         onTap: _onItemTapped,
       ),
       floatingActionButton: _selectedIndex == 1
-          ? FloatingActionButton.extended(
-              onPressed: () async {
-                // Start scanning
-                await deviceProvider
-                    .clearDevices()
-                    .then((_) => deviceProvider.getDevices(context: context));
-              },
-              icon: const Icon(Icons.change_circle_rounded),
-              label: const Text('Scan'),
-            )
+          ? Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FloatingActionButton.extended(
+                  onPressed: () async {
+                    // Start scanning
+                    await deviceProvider
+                        .clearDevices()
+                        .then((_) => deviceProvider.getDevices(context: context));
+                  },
+                  icon: const Icon(Icons.change_circle_rounded),
+                  label: const Text('Scan'),
+                ),
+
+              const SizedBox(width: 10),
+
+              FloatingActionButton.extended(
+                onPressed: () async {
+                  // Start scanning
+                  await deviceProvider.postAdvertData(context: context);
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Post Advt Data'),
+              ),
+            ],
+          )
           : null,
     );
   }

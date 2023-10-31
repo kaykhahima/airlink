@@ -70,6 +70,8 @@ class TokenManager {
       "Content-Type": "application/json"
     });
 
+    print(response.body);
+
     if (response.statusCode == 200) {
       // Parse the JSON string into a Dart Map.
       Map<String, dynamic> jsonData = jsonDecode(response.body);

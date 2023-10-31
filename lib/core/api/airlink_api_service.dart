@@ -71,7 +71,7 @@ class AirLinkAPIService {
   ///Send data to telemetry
   Future<http.Response> postTelemetry({
     required String accessToken,
-    required telemetryData,
+    required Map<String, dynamic> telemetryData,
   }) async {
     String endpointPostModifier = 'v1/$accessToken/telemetry';
 

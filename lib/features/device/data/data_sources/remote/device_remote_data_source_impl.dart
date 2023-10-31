@@ -59,7 +59,7 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
 
         //get access token
         String? accessToken =
-        await secureStorage.get('${dNumber}_access_token');
+            await secureStorage.get('${dNumber}_access_token');
 
         //if access token is null, generate new one
         accessToken ??= generateSAT();
@@ -79,11 +79,12 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
           //save device secret and msg_id to server attributes
           final saveAttributesRes = await airlinkApiService
               .saveEntityAttributes(
-              entityType: EntityType.device,
-              entityId: entityId,
-              scope: Scope.server,
-              attributes: {
-                'device_secret': provisionedDeviceModel.deviceSecret.toUpperCase(),
+                  entityType: EntityType.device,
+                  entityId: entityId,
+                  scope: Scope.server,
+                  attributes: {
+                'device_secret':
+                    provisionedDeviceModel.deviceSecret.toUpperCase(),
                 'msg_id': 0,
                 'payg_type': provisionedDeviceModel.type,
                 'product_code': provisionedDeviceModel.productCode,
@@ -112,7 +113,7 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       try {
         //make api call to create device on the server
         final getTenantDeviceRes =
-        await airlinkApiService.getTenantDevice(deviceName: deviceName);
+            await airlinkApiService.getTenantDevice(deviceName: deviceName);
 
         //decode the response
         final decodedResponse = jsonDecode(getTenantDeviceRes.body);
@@ -171,7 +172,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
             telemetryData: jsonDecode(telemetryModel.data.toString()),
           );
 
-
           if (postTelemetryRes.statusCode == 200) {
             return;
           } else {
@@ -196,63 +196,105 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
   Future<void> postAdvertisementData() async {
     if (await networkInfo.isConnected) {
       //get gateway access token
-      final gatewayAccessToken = await secureStorage.get(
-          'gateway_access_token');
+      final gatewayAccessToken =
+          await secureStorage.get('gateway_access_token');
 
-      if(gatewayAccessToken == null) {
+      if (gatewayAccessToken == null) {
         throw const AirLinkFailure(message: 'Gateway access token not found');
       }
 
-      bool deviceKnown;
-
       //get advertisement data from local storage
       final telemetryData = _telemetryBox.toMap();
+
       for (var key in telemetryData.keys) {
         //check if key begins with 'advt'
         if (key.split('_')[0] == 'advt') {
-
           final deviceName = key.split('_')[1];
 
-          //check if the gateway knows its access token
-          final accessToken = await secureStorage.get('${deviceName}_access_token');
+          //get device mac
+          final deviceMac = telemetryData[key]['mac'];
 
-          //prepend keys with 'advt' eg. advt_123456789
-          String jsonData = prepend(jsonEncode(telemetryData[key]), 'advt');
+          //prepend keys with 'advt' eg. "pst: 7" would be "advt_pst: 7"
+          final jsonData = jsonDecode(prepend(jsonEncode(telemetryData[key]), 'advt'));
 
-          // transform data into cbor value
-          final deviceCborValue = CborValue(jsonData);
-
-          final sendCborValue = CborValue(
-            {
-              'advt_adn': deviceName,
-              'advt_tms': deviceCborValue,
+          //payload
+          final body = {
+            "entityFilter": {
+              "type": "entityType",
+              "resolveMultiple": true,
+              "entityType": "DEVICE"
             },
-          );
+            "keyFilters": [
+              {
+                "key": {"type": "SHARED_ATTRIBUTE", "key": "advt_mac"},
+                "valueType": "STRING",
+                "predicate": {
+                  "operation": "EQUAL",
+                  "value": {"defaultValue": 'deviceMac', "dynamicValue": null},
+                  "type": "STRING"
+                }
+              }
+            ],
+            "entityFields": [
+              {"type": "ENTITY_FIELD", "key": "name"},
+              {"type": "ENTITY_FIELD", "key": "type"}
+            ],
+            "pageLink": {
+              "page": 0,
+              "pageSize": 10,
+              "sortOrder": {
+                "key": {"key": "name", "type": "ENTITY_FIELD"},
+                "direction": "ASC"
+              }
+            }
+          };
 
-          //if access token is not null, device is known
-          deviceKnown = accessToken != null;
+          //get device data from server using device mac
+          final findDeviceByQueryRes =
+              await airlinkApiService.findEntityDataByQuery(body: body);
 
-          //set contents based on whether device is known or not
-          String contents = deviceKnown
-              ? const CborJsonEncoder().convert(deviceCborValue)
-              : const CborJsonEncoder().convert(sendCborValue);
+          if (findDeviceByQueryRes.statusCode == 200) {
+            //decode response
+            final decodedRes = jsonDecode(findDeviceByQueryRes.body);
 
-          //make api call to post advt data
-          final postAdvtDataRes = await airlinkApiService.postTelemetry(
-              accessToken: gatewayAccessToken, telemetryData: jsonDecode(contents));
+            Map<String, dynamic> contents = {};
 
-          if(postAdvtDataRes.statusCode == 200) {
-            return;
-          }
-          else {
+            if (decodedRes['totalElements'] > 0) {
+              //device found
+              //use device name returned in response
+              contents = {
+                'advt_adn': decodedRes['data'][0]['latest']['ENTITY_FIELD']
+                    ['name']['value'],
+                'advt_tms': jsonData,
+              };
+            } else {
+              //device found
+              //use device mac
+              contents = {
+                'advt_mac': deviceMac,
+                'advt_tms': jsonData,
+              };
+            }
+
+            //make api call to post advt data
+            final postAdvtDataRes = await airlinkApiService.postTelemetry(
+                accessToken: gatewayAccessToken, telemetryData: contents);
+
+            if (postAdvtDataRes.statusCode == 200) {
+              return;
+            } else {
+              //decode body
+              final decodedResponse = jsonDecode(postAdvtDataRes.body);
+              throw AirLinkFailure(message: decodedResponse['message']);
+            }
+          } else {
             //decode body
-            final decodedResponse = jsonDecode(postAdvtDataRes.body);
+            final decodedResponse = jsonDecode(findDeviceByQueryRes.body);
             throw AirLinkFailure(message: decodedResponse['message']);
           }
         }
       }
-    }
-    else {
+    } else {
       throw const NetworkFailure(message: 'No internet connection');
     }
   }
