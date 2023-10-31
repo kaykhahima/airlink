@@ -5,7 +5,6 @@ import 'package:airlink/core/api/airlink_api_service.dart';
 import 'package:airlink/core/errors/failures.dart';
 import 'package:airlink/core/utils/enums/enums.dart';
 import 'package:airlink/features/device/data/models/telemetry_model.dart';
-import 'package:cbor/cbor.dart';
 import 'package:hive/hive.dart';
 
 import '../../../../../core/device_info/device_info.dart';
@@ -209,8 +208,6 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
       for (var key in telemetryData.keys) {
         //check if key begins with 'advt'
         if (key.split('_')[0] == 'advt') {
-          final deviceName = key.split('_')[1];
-
           //get device mac
           final deviceMac = telemetryData[key]['mac'];
 
@@ -230,7 +227,7 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
                 "valueType": "STRING",
                 "predicate": {
                   "operation": "EQUAL",
-                  "value": {"defaultValue": 'deviceMac', "dynamicValue": null},
+                  "value": {"defaultValue": deviceMac, "dynamicValue": null},
                   "type": "STRING"
                 }
               }
