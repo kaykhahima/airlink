@@ -177,8 +177,7 @@ class DeviceRepositoryImpl implements DeviceRepository {
       }
 
       return const Right(null);
-    } catch (e, st) {
-      print(st.toString());
+    } catch (e) {
       return Left(AirLinkFailure(message: e.toString()));
     }
   }

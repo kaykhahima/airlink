@@ -9,6 +9,7 @@ class AppbarActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
+      position: PopupMenuPosition.under,
       onSelected: (String result) async {
         if (result == 'postAdvtData') {
           //post advt data

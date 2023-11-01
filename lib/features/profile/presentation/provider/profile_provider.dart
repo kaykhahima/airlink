@@ -46,7 +46,6 @@ class ProfileProvider extends ChangeNotifier {
       Snackbar.hide(context: context);
 
       if (failure is ServerFailure) {
-        print(failure.message);
         Snackbar.show(
             context: context,
             type: SnackbarType.error,

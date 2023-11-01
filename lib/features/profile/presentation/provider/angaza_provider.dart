@@ -43,7 +43,6 @@ class AngazaProvider extends ChangeNotifier {
     final result = await getAngazaCredentials(NoParams());
 
     result.fold((failure) {
-      print(failure.toString());
     }, (angazaUser) {
       _angazaUserModel = AngazaUserModel.fromEntity(angazaUser);
       notifyListeners();

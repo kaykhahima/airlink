@@ -481,7 +481,6 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
         throw const CacheFailure(message: 'No data available');
       }
     } catch (e) {
-      print(e.toString());
       throw const BLEDeviceFailure(message: 'Failed to push data');
     }
   }
@@ -511,8 +510,7 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
       List dataList = await _telemetryBox.get(deviceName);
       return dataList;
     }
-    catch (e, st) {
-      print(st.toString());
+    catch (e) {
       throw CacheFailure(message: e.toString());
     }
   }
@@ -586,8 +584,7 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
     try {
       //save data to local storage
       _telemetryBox.put(deviceName, data);
-    } catch (e, st) {
-      print(st.toString());
+    } catch (e) {
       throw CacheFailure(message: e.toString());
     }
   }
@@ -598,8 +595,7 @@ class BLEDeviceLocalDataSourceImpl implements DeviceLocalDataSource {
       List? dataList = await _attributesBox.get(deviceName);
       return dataList ?? [];
     }
-    catch (e, st) {
-      print(st.toString());
+    catch (e) {
       throw CacheFailure(message: e.toString());
     }
   }

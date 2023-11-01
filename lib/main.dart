@@ -96,7 +96,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(_titles.elementAt(_selectedIndex)),
         actions: [
-          AppbarActions(deviceProvider: deviceProvider,),
+          if(_selectedIndex == 1) AppbarActions(deviceProvider: deviceProvider,),
         ],
       ),
       body: Container(
