@@ -1,56 +1,19 @@
+import 'package:airlink/core/widgets/appbar_actions.dart';
 import 'package:airlink/features/generate_token/presentation/pages/generate_token_page.dart';
 import 'package:airlink/features/profile/presentation/pages/profile_page.dart';
 import 'package:airlink/providers.dart';
 import 'package:airlink/service_locator.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
-import 'package:workmanager/workmanager.dart';
 
-import 'core/background_tasks/background_tasks.dart';
-import 'features/device/data/data_sources/remote/device_remote_data_source_impl.dart';
 import 'features/device/presentation/pages/device_list_page.dart';
 import 'features/device/presentation/providers/device_provider.dart';
 
-@pragma('vm:entry-point')
-void callbackDispatcher() {
-  //Handles background tasks when called
-  Workmanager().executeTask((taskName, inputData) async {
-    if (taskName == 'postAdvertData') {
-      if (kDebugMode) {
-        print("Background task called: $taskName");
-      }
-      //initialize service locator
-      initializeDependencies();
-
-      //Initializes Hive
-      await Hive.initFlutter();
-
-      //open boxes
-      //storing device profile data: username, pwd, gatewayDeviceId
-      await Hive.openBox('profiles');
-
-      //store telemetry data from the BLE Device
-      await Hive.openBox('telemetry');
-
-      //post advt data
-      await sl<DeviceRemoteDataSourceImpl>().postAdvertisementData();
-    }
-    return Future.value(true);
-  });
-}
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  //Initializes Workmanager
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-
+openHiveBoxes() async {
   //Initializes Hive
   await Hive.initFlutter();
 
-  //open boxes
   //storing device profile data: username, pwd, gatewayDeviceId
   await Hive.openBox('profiles');
 
@@ -62,12 +25,16 @@ void main() async {
 
   //stores attributes data from the server
   await Hive.openBox('attributes');
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  //open hive boxes
+  await openHiveBoxes();
 
   //initialize service locator
   initializeDependencies();
-
-  //run background task
-  postAdvtData();
 
   //run app
   runApp(MultiProvider(providers: providers, child: const App()));
@@ -128,6 +95,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_titles.elementAt(_selectedIndex)),
+        actions: [
+          AppbarActions(deviceProvider: deviceProvider,),
+        ],
       ),
       body: Container(
         child: _widgetOptions.elementAt(_selectedIndex),
@@ -151,32 +121,16 @@ class _HomePageState extends State<HomePage> {
         onTap: _onItemTapped,
       ),
       floatingActionButton: _selectedIndex == 1
-          ? Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              FloatingActionButton.extended(
-                  onPressed: () async {
-                    // Start scanning
-                    await deviceProvider
-                        .clearDevices()
-                        .then((_) => deviceProvider.getDevices(context: context));
-                  },
-                  icon: const Icon(Icons.change_circle_rounded),
-                  label: const Text('Scan'),
-                ),
-
-              const SizedBox(width: 10),
-
-              FloatingActionButton.extended(
-                onPressed: () async {
-                  // Start scanning
-                  await deviceProvider.postAdvertData(context: context);
-                },
-                icon: const Icon(Icons.refresh),
-                label: const Text('Post Advt Data'),
-              ),
-            ],
-          )
+          ? FloatingActionButton.extended(
+              onPressed: () async {
+                // Start scanning
+                await deviceProvider
+                    .clearDevices()
+                    .then((_) => deviceProvider.getDevices(context: context));
+              },
+              icon: const Icon(Icons.change_circle_rounded),
+              label: const Text('Scan'),
+            )
           : null,
     );
   }

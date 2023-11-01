@@ -193,6 +193,9 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
 
   @override
   Future<void> postAdvertisementData() async {
+
+
+    print('posting advt data');
     if (await networkInfo.isConnected) {
       //get gateway access token
       final gatewayAccessToken =
@@ -204,6 +207,8 @@ class DeviceRemoteDataSourceImpl implements DeviceRemoteDataSource {
 
       //get advertisement data from local storage
       final telemetryData = _telemetryBox.toMap();
+
+      print('posting advt data ${telemetryData.length}');
 
       for (var key in telemetryData.keys) {
         //check if key begins with 'advt'

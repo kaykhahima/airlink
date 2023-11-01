@@ -404,16 +404,37 @@ class DeviceProvider extends ChangeNotifier {
 
   //post advertisement data
   Future<void> postAdvertData({required BuildContext context}) async {
+
+    //show loading
+    Snackbar.show(
+        context: context,
+        message: 'Posting advertisement data...',
+        type: SnackbarType.loading,
+        timeoutInSeconds: 120);
+
     final result = await postAdvertisementData(NoParams());
 
     result.fold((failure) {
-      if (kDebugMode) {
-        print(failure.toString());
-      }
+
+      //hide loading
+      Snackbar.hide(context: context);
+
+      //show error
+      Snackbar.show(
+        context: context,
+        message: failure.toString(),
+        type: SnackbarType.error,
+      );
     }, (_) {
-      if (kDebugMode) {
-        print('Advertisement data posted');
-      }
+      //hide loading
+      Snackbar.hide(context: context);
+
+      //show success
+      Snackbar.show(
+        context: context,
+        message: 'Advertisement data posted',
+        type: SnackbarType.success,
+      );
     });
   }
 
